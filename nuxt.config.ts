@@ -3,4 +3,12 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@nuxtjs/tailwindcss'],
   typescript: { strict: true },
+  app: {
+    head: {
+      title: 'BaridMan — HTTP client for n8n',
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+      ],
+    },
+  },
 })

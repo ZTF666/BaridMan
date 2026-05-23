@@ -24,5 +24,18 @@ const { response, loading } = useHttpSender()
         <ResponsePanel :response="response" :loading="loading" />
       </section>
     </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-zinc-800 px-6 py-2 flex items-center justify-end">
+      <span class="text-xs text-zinc-600">
+        made by
+        <a
+          href="https://github.com/ZTF666"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-zinc-400 hover:text-orange-400 transition-colors ml-1"
+        >ZTF</a>
+      </span>
+    </footer>
   </div>
 </template>
