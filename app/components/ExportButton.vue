@@ -66,6 +66,9 @@ async function copyToClipboard() {
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
           </div>
+          <div class="px-4 py-2 bg-zinc-800/50 border-b border-zinc-800 text-xs text-zinc-400">
+            Copy → open n8n workflow canvas → <kbd class="px-1 py-0.5 bg-zinc-700 rounded text-zinc-300">Ctrl+V</kbd> to paste as a node. Do not paste into the cURL import field inside a node.
+          </div>
           <pre class="flex-1 overflow-auto p-4 text-sm text-zinc-300 font-mono whitespace-pre">{{ exportedJson }}</pre>
           <div class="px-4 py-3 border-t border-zinc-800 flex justify-end gap-2">
             <button type="button" class="px-3 py-1.5 text-sm text-zinc-400 hover:text-zinc-200" @click="showPreview = false">Close</button>
