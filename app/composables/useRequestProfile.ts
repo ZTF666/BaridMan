@@ -16,7 +16,7 @@ function defaultProfile(): RequestProfile {
   }
 }
 
-const STORAGE_KEY = 'n8nrequest_profile'
+const STORAGE_KEY = 'baridman_profile'
 
 function loadFromStorage(): RequestProfile {
   if (import.meta.server) return defaultProfile()

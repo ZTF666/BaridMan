@@ -8,7 +8,7 @@ const { response, loading } = useHttpSender()
   <div class="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col">
     <!-- Header -->
     <header class="border-b border-zinc-800 px-6 py-3 flex items-center gap-3">
-      <span class="text-orange-400 font-bold tracking-tight text-lg">n8nRequest</span>
+      <span class="text-orange-400 font-bold tracking-tight text-lg">BaridMan</span>
       <span class="text-zinc-600 text-sm">HTTP client → n8n node exporter</span>
     </header>
 
