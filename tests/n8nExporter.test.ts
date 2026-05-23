@@ -15,18 +15,20 @@ function makeProfile(overrides: Partial<RequestProfile> = {}): RequestProfile {
   }
 }
 
-// Output is an array — unwrap the first node for assertions
+// Output is { nodes, connections, pinData } — unwrap the first node for assertions
 function parse(profile: RequestProfile) {
-  const arr = JSON.parse(exportToN8n(profile))
-  expect(Array.isArray(arr)).toBe(true)
-  return arr[0]
+  const obj = JSON.parse(exportToN8n(profile))
+  expect(obj).toHaveProperty('nodes')
+  return obj.nodes[0]
 }
 
 describe('exportToN8n', () => {
-  it('output is an array with one node (n8n canvas paste format)', () => {
-    const arr = JSON.parse(exportToN8n(makeProfile()))
-    expect(Array.isArray(arr)).toBe(true)
-    expect(arr).toHaveLength(1)
+  it('output is n8n workflow clipboard shape { nodes, connections, pinData }', () => {
+    const obj = JSON.parse(exportToN8n(makeProfile()))
+    expect(obj).toHaveProperty('nodes')
+    expect(obj).toHaveProperty('connections')
+    expect(obj).toHaveProperty('pinData')
+    expect(obj.nodes).toHaveLength(1)
   })
 
   it('node has a uuid id field', () => {

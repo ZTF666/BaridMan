@@ -56,15 +56,15 @@ export function exportToN8n(profile: RequestProfile): string {
     parameters.sendBody = false
   }
 
-  // n8n expects an array with an id when pasting onto the canvas (Ctrl+V)
   const node = {
     parameters,
     id: crypto.randomUUID(),
+    name: 'HTTP Request',
     type: 'n8n-nodes-base.httpRequest',
     typeVersion: N8N_HTTP_NODE_VERSION,
     position: [0, 0],
-    name: 'HTTP Request',
   }
 
-  return JSON.stringify([node], null, 2)
+  // n8n canvas Ctrl+V expects the same structure it writes when you copy a node
+  return JSON.stringify({ nodes: [node], connections: {}, pinData: {} }, null, 2)
 }
