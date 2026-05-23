@@ -16,6 +16,10 @@ const bodyTypes: { value: BodyType; label: string }[] = [
   { value: 'json', label: 'JSON' },
   { value: 'form', label: 'Form URL-encoded' },
 ]
+
+const placeholder = computed(() =>
+  props.bodyType === 'json' ? '{\n  "key": "value"\n}' : 'key=value&other=123'
+)
 </script>
 
 <template>
@@ -40,7 +44,7 @@ const bodyTypes: { value: BodyType; label: string }[] = [
     <div v-if="bodyType !== 'none'">
       <textarea
         :value="body"
-        :placeholder="bodyType === 'json' ? '{\n  \"key\": \"value\"\n}' : 'key=value&other=123'"
+        :placeholder="placeholder"
         class="w-full h-48 bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 font-mono focus:outline-none focus:border-zinc-500 resize-y"
         spellcheck="false"
         @input="emit('update:body', ($event.target as HTMLTextAreaElement).value)"
