@@ -55,7 +55,7 @@ describe('exportToN8n', () => {
       body: '{"key":"value"}',
     }))
     expect(node.parameters.sendBody).toBe(true)
-    expect(node.parameters.specifyBody).toBe('string')
+    expect(node.parameters.specifyBody).toBe('json')
     expect(node.parameters.contentType).toBe('json')
     expect(node.parameters.jsonBody).toBe('{"key":"value"}')
   })
@@ -67,7 +67,7 @@ describe('exportToN8n', () => {
       body: 'key=value',
     }))
     expect(node.parameters.sendBody).toBe(true)
-    expect(node.parameters.specifyBody).toBe('string')
+    expect(node.parameters.specifyBody).toBe('keypairs')
     expect(node.parameters.contentType).toBe('form-urlencoded')
   })
 

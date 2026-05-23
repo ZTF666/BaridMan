@@ -45,12 +45,13 @@ export function exportToN8n(profile: RequestProfile): string {
   const hasBody = profile.bodyType !== 'none' && profile.body
   if (hasBody) {
     parameters.sendBody = true
-    parameters.specifyBody = 'string'
     if (profile.bodyType === 'json') {
       parameters.contentType = 'json'
+      parameters.specifyBody = 'json'
       parameters.jsonBody = profile.body
     } else if (profile.bodyType === 'form') {
       parameters.contentType = 'form-urlencoded'
+      parameters.specifyBody = 'keypairs'
       parameters.body = profile.body
     }
   } else {
