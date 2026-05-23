@@ -24,9 +24,12 @@ Build your request in BaridMan. Hit Send to confirm it works. Hit **Export to n8
 
 - **Import from cURL** — paste any curl command, fields populate automatically
 - **Full request builder** — method, URL, headers, query params, JSON/form body
+- **Schema body builder** — define fields with name + type, fill in values, JSON generates automatically
+- **CSV schema import** — drop a CSV, headers become fields instantly
 - **Auth support** — Bearer token, Basic auth, API Key
 - **Live response panel** — status code, timing, pretty-printed JSON, response headers
-- **Export to n8n** — generates a valid HTTP Request node (typeVersion 4.2) ready to paste
+- **Request history** — last 20 sent requests, click any to restore
+- **Export to n8n** — generates a valid HTTP Request node (typeVersion 4.2) ready to paste with `Ctrl+V`
 - **Persistent state** — your last request profile survives page refresh via localStorage
 - **No backend** — everything runs in the browser
 
@@ -41,6 +44,21 @@ Build your request in BaridMan. Hit Send to confirm it works. Hit **Export to n8
 3. Hit **Send** to test the request
 4. Hit **Export to n8n** → **Copy to Clipboard**
 5. Open your n8n workflow canvas → `Ctrl+V`
+
+### Schema body builder
+
+Instead of typing raw JSON, use the **Schema** tab under Body:
+
+1. Add field names and pick a type for each: `string`, `number`, `boolean`, or `date`
+2. Fill in the values — inputs adapt per type (number input, date picker, true/false dropdown)
+3. The JSON body generates live as you type
+4. Export to n8n — the body is serialized with correct types (no quoted numbers)
+
+**CSV import:** if your API has a schema CSV, click **Import CSV schema** — the first row headers become fields automatically. Supports type hints in headers: `amount(number)`, `is_active(boolean)`.
+
+### Request history
+
+Click the **clock icon** in the top-right header to open your request history. The last 20 requests are saved automatically. Click any entry to restore the full request profile. Delete individual entries or clear all.
 
 ### Import from cURL
 
@@ -81,18 +99,21 @@ app/
 ├── components/
 │   ├── RequestBuilder.vue       # left panel
 │   ├── KeyValueEditor.vue       # headers & query params table
-│   ├── BodyEditor.vue           # JSON / form body editor
+│   ├── BodyEditor.vue           # JSON / form / schema body switcher
+│   ├── SchemaBodyEditor.vue     # field name + type + value table, CSV import
 │   ├── AuthEditor.vue           # Bearer / Basic / API Key
 │   ├── ResponsePanel.vue        # status, body, headers
 │   ├── ExportButton.vue         # n8n export + clipboard
-│   └── CurlImportModal.vue      # curl → request profile
+│   ├── CurlImportModal.vue      # curl → request profile
+│   └── HistoryPanel.vue         # last 20 requests, restore on click
 ├── composables/
 │   ├── useRequestProfile.ts     # central request state + localStorage
-│   └── useHttpSender.ts         # fetch wrapper
+│   ├── useHttpSender.ts         # fetch wrapper
+│   └── useHistory.ts            # history state + localStorage
 utils/
 ├── n8nExporter.ts               # Request Profile → n8n node JSON
 └── curlParser.ts                # curl string → Request Profile
-types/index.ts                   # RequestProfile, AuthConfig, etc.
+types/index.ts                   # RequestProfile, SchemaField, HistoryEntry, etc.
 tests/
 ├── n8nExporter.test.ts
 └── curlParser.test.ts
@@ -100,14 +121,12 @@ tests/
 
 ---
 
-## Out of Scope (v1)
+## Roadmap
 
-- Collections / saved request history
-- Environment variables (`{{BASE_URL}}`)
-- OAuth2 flow
-- WebSocket / GraphQL
-- Backend proxy for CORS bypass
-- Multi-node workflow export
+- [ ] Saved request profiles (named, multiple slots)
+- [ ] Environment variables (`{{BASE_URL}}`, `{{API_KEY}}`)
+- [ ] Response syntax highlighting (Shiki)
+- [ ] cURL export
 
 ---
 
