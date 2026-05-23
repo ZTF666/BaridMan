@@ -33,6 +33,16 @@ export function useHttpSender() {
       } else if (profile.bodyType === 'form' && profile.body) {
         body = profile.body
         if (!headers['Content-Type']) headers['Content-Type'] = 'application/x-www-form-urlencoded'
+      } else if (profile.bodyType === 'schema' && profile.schemaFields?.length) {
+        const obj: Record<string, unknown> = {}
+        for (const f of profile.schemaFields) {
+          if (!f.name || f.value === '') continue
+          if (f.type === 'number') obj[f.name] = Number(f.value)
+          else if (f.type === 'boolean') obj[f.name] = f.value === 'true'
+          else obj[f.name] = f.value
+        }
+        body = JSON.stringify(obj)
+        if (!headers['Content-Type']) headers['Content-Type'] = 'application/json'
       }
 
       const res = await fetch(profile.url, {

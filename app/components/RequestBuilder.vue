@@ -2,9 +2,11 @@
 import type { HttpMethod } from '~/types'
 import { useRequestProfile } from '~/composables/useRequestProfile'
 import { useHttpSender } from '~/composables/useHttpSender'
+import { useHistory } from '~/composables/useHistory'
 
-const { profile, setMethod, setUrl, setHeaders, setQueryParams, setBody, setBodyType, setAuth, mergePartial } = useRequestProfile()
+const { profile, setMethod, setUrl, setHeaders, setQueryParams, setBody, setBodyType, setSchemaFields, setAuth, mergePartial } = useRequestProfile()
 const { send, loading, response } = useHttpSender()
+const { push: pushHistory } = useHistory()
 
 defineExpose({ response, loading })
 
@@ -25,6 +27,7 @@ const methodColors: Record<HttpMethod, string> = {
 
 async function onSend() {
   await send(profile.value)
+  if (profile.value.url.trim()) pushHistory(profile.value)
 }
 </script>
 
@@ -108,8 +111,10 @@ async function onSend() {
         v-else-if="activeTab === 'body'"
         :body="profile.body"
         :body-type="profile.bodyType"
+        :schema-fields="profile.schemaFields"
         @update:body="setBody"
         @update:body-type="setBodyType"
+        @update:schema-fields="setSchemaFields"
       />
       <AuthEditor
         v-else-if="activeTab === 'auth'"

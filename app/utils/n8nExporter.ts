@@ -42,21 +42,37 @@ export function exportToN8n(profile: RequestProfile): string {
     parameters.sendQuery = false
   }
 
-  const hasBody = profile.bodyType !== 'none' && profile.body
-  if (hasBody) {
+  let hasBody = false
+  if (profile.bodyType === 'json' && profile.body) {
+    hasBody = true
     parameters.sendBody = true
-    if (profile.bodyType === 'json') {
+    parameters.contentType = 'json'
+    parameters.specifyBody = 'json'
+    parameters.jsonBody = profile.body
+  } else if (profile.bodyType === 'form' && profile.body) {
+    hasBody = true
+    parameters.sendBody = true
+    parameters.contentType = 'form-urlencoded'
+    parameters.specifyBody = 'keypairs'
+    parameters.body = profile.body
+  } else if (profile.bodyType === 'schema' && profile.schemaFields?.length) {
+    const obj: Record<string, unknown> = {}
+    for (const f of profile.schemaFields) {
+      if (!f.name || f.value === '') continue
+      if (f.type === 'number') obj[f.name] = Number(f.value)
+      else if (f.type === 'boolean') obj[f.name] = f.value === 'true'
+      else obj[f.name] = f.value
+    }
+    const json = JSON.stringify(obj)
+    if (json !== '{}') {
+      hasBody = true
+      parameters.sendBody = true
       parameters.contentType = 'json'
       parameters.specifyBody = 'json'
-      parameters.jsonBody = profile.body
-    } else if (profile.bodyType === 'form') {
-      parameters.contentType = 'form-urlencoded'
-      parameters.specifyBody = 'keypairs'
-      parameters.body = profile.body
+      parameters.jsonBody = json
     }
-  } else {
-    parameters.sendBody = false
   }
+  if (!hasBody) parameters.sendBody = false
 
   const node = {
     parameters,

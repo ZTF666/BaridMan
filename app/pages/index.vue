@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { useHttpSender } from '~/composables/useHttpSender'
+import { useRequestProfile } from '~/composables/useRequestProfile'
+import type { HistoryEntry } from '~/types'
 
 const { response, loading } = useHttpSender()
+const { mergePartial } = useRequestProfile()
+
+function restoreFromHistory(entry: HistoryEntry) {
+  mergePartial(entry.profile)
+}
 </script>
 
 <template>
@@ -10,6 +17,9 @@ const { response, loading } = useHttpSender()
     <header class="border-b border-zinc-800 px-6 py-3 flex items-center gap-3">
       <span class="text-orange-400 font-bold tracking-tight text-lg">BaridMan</span>
       <span class="text-zinc-600 text-sm">HTTP client → n8n node exporter</span>
+      <div class="ml-auto">
+        <HistoryPanel @restore="restoreFromHistory" />
+      </div>
     </header>
 
     <!-- Main two-column layout -->

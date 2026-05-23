@@ -1,20 +1,23 @@
 <script setup lang="ts">
-import type { BodyType } from '~/types'
+import type { BodyType, SchemaField } from '~/types'
 
 const props = defineProps<{
   body: string
   bodyType: BodyType
+  schemaFields: SchemaField[]
 }>()
 
 const emit = defineEmits<{
   'update:body': [value: string]
   'update:bodyType': [value: BodyType]
+  'update:schemaFields': [fields: SchemaField[]]
 }>()
 
 const bodyTypes: { value: BodyType; label: string }[] = [
   { value: 'none', label: 'None' },
   { value: 'json', label: 'JSON' },
   { value: 'form', label: 'Form URL-encoded' },
+  { value: 'schema', label: 'Schema' },
 ]
 
 const placeholder = computed(() =>
@@ -24,7 +27,7 @@ const placeholder = computed(() =>
 
 <template>
   <div class="space-y-3">
-    <div class="flex gap-2">
+    <div class="flex gap-2 flex-wrap">
       <button
         v-for="bt in bodyTypes"
         :key="bt.value"
@@ -41,7 +44,13 @@ const placeholder = computed(() =>
       </button>
     </div>
 
-    <div v-if="bodyType !== 'none'">
+    <SchemaBodyEditor
+      v-if="bodyType === 'schema'"
+      :fields="schemaFields"
+      @update="emit('update:schemaFields', $event)"
+    />
+
+    <div v-else-if="bodyType !== 'none'">
       <textarea
         :value="body"
         :placeholder="placeholder"

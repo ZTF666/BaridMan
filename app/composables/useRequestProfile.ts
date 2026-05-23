@@ -1,7 +1,11 @@
-import type { RequestProfile, HttpMethod, BodyType, AuthConfig, KeyValueRow } from '~/types'
+import type { RequestProfile, HttpMethod, BodyType, AuthConfig, KeyValueRow, SchemaField } from '~/types'
 
 function makeRow(key = '', value = '', enabled = true): KeyValueRow {
   return { id: crypto.randomUUID(), key, value, enabled }
+}
+
+function makeField(): SchemaField {
+  return { id: crypto.randomUUID(), name: '', type: 'string', value: '' }
 }
 
 function defaultProfile(): RequestProfile {
@@ -12,6 +16,7 @@ function defaultProfile(): RequestProfile {
     queryParams: [makeRow()],
     body: '',
     bodyType: 'none',
+    schemaFields: [makeField()],
     auth: { type: 'none' },
   }
 }
@@ -23,7 +28,9 @@ function loadFromStorage(): RequestProfile {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return defaultProfile()
-    return JSON.parse(raw) as RequestProfile
+    const parsed = JSON.parse(raw) as RequestProfile
+    if (!parsed.schemaFields) parsed.schemaFields = [makeField()]
+    return parsed
   } catch {
     return defaultProfile()
   }
@@ -87,6 +94,10 @@ export function useRequestProfile() {
     profile.value.bodyType = bodyType
   }
 
+  function setSchemaFields(fields: SchemaField[]) {
+    profile.value.schemaFields = fields
+  }
+
   function setAuth(auth: AuthConfig) {
     profile.value.auth = auth
   }
@@ -107,9 +118,11 @@ export function useRequestProfile() {
     setQueryParams,
     setBody,
     setBodyType,
+    setSchemaFields,
     setAuth,
     reset,
     mergePartial,
     makeRow,
+    makeField,
   }
 }
