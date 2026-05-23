@@ -55,8 +55,9 @@ describe('exportToN8n', () => {
       body: '{"key":"value"}',
     }))
     expect(node.parameters.sendBody).toBe(true)
+    expect(node.parameters.specifyBody).toBe('string')
     expect(node.parameters.contentType).toBe('json')
-    expect(node.parameters.body).toBe('{"key":"value"}')
+    expect(node.parameters.jsonBody).toBe('{"key":"value"}')
   })
 
   it('POST with form body sets contentType form-urlencoded', () => {
@@ -66,6 +67,7 @@ describe('exportToN8n', () => {
       body: 'key=value',
     }))
     expect(node.parameters.sendBody).toBe(true)
+    expect(node.parameters.specifyBody).toBe('string')
     expect(node.parameters.contentType).toBe('form-urlencoded')
   })
 
