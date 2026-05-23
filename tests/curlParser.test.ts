@@ -63,4 +63,35 @@ describe('parseCurl', () => {
     const result = parseCurl(`curl -X POST --data-raw 'raw body' https://example.com`)
     expect(result.body).toBe('raw body')
   })
+
+  it('--cookie value is not mistaken for the URL', () => {
+    const result = parseCurl(
+      `curl --location 'https://api.example.com/endpoint' --cookie '_session=abc123'`
+    )
+    expect(result.url).toBe('https://api.example.com/endpoint')
+    expect(result.headers?.find(h => h.key === 'Cookie')?.value).toBe('_session=abc123')
+  })
+
+  it('-b cookie is added as Cookie header', () => {
+    const result = parseCurl(`curl https://api.example.com -b 'token=xyz'`)
+    expect(result.url).toBe('https://api.example.com')
+    expect(result.headers?.find(h => h.key === 'Cookie')?.value).toBe('token=xyz')
+  })
+
+  it('--location flag does not consume the URL as its argument', () => {
+    const result = parseCurl(`curl --location 'https://api.example.com'`)
+    expect(result.url).toBe('https://api.example.com')
+  })
+
+  it('Insomnia-style export with --cookie is parsed correctly', () => {
+    const result = parseCurl(
+      `curl --location --request GET 'https://myapp.example.com/api/data' \\\n` +
+      `--cookie '_zazu_session=K8oCSt7abc' \\\n` +
+      `--header 'Accept: application/json'`
+    )
+    expect(result.url).toBe('https://myapp.example.com/api/data')
+    expect(result.method).toBe('GET')
+    expect(result.headers?.find(h => h.key === 'Cookie')?.value).toBe('_zazu_session=K8oCSt7abc')
+    expect(result.headers?.find(h => h.key === 'Accept')?.value).toBe('application/json')
+  })
 })

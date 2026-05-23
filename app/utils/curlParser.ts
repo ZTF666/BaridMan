@@ -4,6 +4,31 @@ function makeRow(key: string, value: string): KeyValueRow {
   return { id: crypto.randomUUID(), key, value, enabled: true }
 }
 
+// Flags that consume the next token as their value but we skip entirely
+const SKIP_ARG_FLAGS = new Set([
+  '-o', '--output',
+  '-e', '--referer',
+  '-m', '--max-time',
+  '--connect-timeout',
+  '--retry',
+  '--proxy', '-x',
+])
+
+// Boolean flags (no argument) we can safely ignore
+const BOOL_FLAGS = new Set([
+  '-L', '--location',
+  '--compressed',
+  '-k', '--insecure',
+  '-s', '--silent',
+  '-v', '--verbose',
+  '-i', '--include',
+  '-I', '--head',
+  '-g', '--globoff',
+  '--http1.1', '--http2',
+  '-f', '--fail',
+  '--no-keepalive',
+])
+
 function tokenize(input: string): string[] {
   const tokens: string[] = []
   let current = ''
@@ -66,9 +91,23 @@ export function parseCurl(input: string): Partial<RequestProfile> {
         const colon = raw.indexOf(':')
         basicUsername = colon !== -1 ? raw.slice(0, colon) : raw
         basicPassword = colon !== -1 ? raw.slice(colon + 1) : ''
+      } else if (t === '-b' || t === '--cookie') {
+        // Add cookie as a Cookie header
+        const raw = tokens[++i] ?? ''
+        if (raw) headers.push(makeRow('Cookie', raw))
+      } else if (t === '-A' || t === '--user-agent') {
+        const raw = tokens[++i] ?? ''
+        if (raw) headers.push(makeRow('User-Agent', raw))
+      } else if (BOOL_FLAGS.has(t)) {
+        // boolean flag, no argument — skip
+      } else if (SKIP_ARG_FLAGS.has(t)) {
+        i++ // skip the flag's argument too
       } else if (!t.startsWith('-')) {
-        // positional URL — skip 'curl' itself (already handled)
-        if (t !== 'curl') url = t
+        // Only accept absolute URLs to avoid cookie values / other args
+        // being mistaken for a URL
+        if (t.startsWith('http://') || t.startsWith('https://')) {
+          url = t
+        }
       }
 
       i++
